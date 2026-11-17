@@ -1,0 +1,46 @@
+name: thanks
+on:
+  issues:
+    types: opened
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  thanks:
+    runs-on: Ubuntu-latest
+    steps:
+      - name: Thank the user for opening an issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const issueNumber = context.issue.number || 1;
+            console.log(`Thanking user for opening issue #${issueNumber}`);
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const issue = await github.issues.get({
+              owner,
+              repo,
+              issue_number: issueNumber
+            });
+
+            console.log(`Issue: ${issue}`);
+
+            const issueComment = context.issue({ repo, owner, issueNumber, body: 'Thank you for opening this issue! We will look into it as soon as possible.' });
+            await github.issues.createComment(issueComment);
+
+            github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              labels: ['todo-review']
+            });
+
+            return comment.data.id;
+
+      - name: Print the comment ID
+        run: echo 'comment id ${{steps.thanks.outputs.comment-id}}'
