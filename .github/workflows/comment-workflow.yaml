@@ -10,9 +10,16 @@ permissions:
   issues: write
 
 jobs:
+  logs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log the event payload
+        run: |
+          echo "Event payload:"
+          echo "${{ toJson(github.event) }}"
+
   thanks:
     runs-on: ubuntu-latest
-
     steps:
       - name: Thank the user for opening an issue
         id: thanks
