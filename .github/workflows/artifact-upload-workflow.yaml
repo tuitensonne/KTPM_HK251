@@ -1,0 +1,18 @@
+name: artifact-upload
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  upload-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: ./FE/docs
+          retention-days: 1
